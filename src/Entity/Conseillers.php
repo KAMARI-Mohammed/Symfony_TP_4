@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ConseillersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConseillersRepository::class)]
@@ -27,6 +29,14 @@ class Conseillers
 
     #[ORM\ManyToOne(inversedBy: 'id_agence')]
     private ?agences $agence_id = null;
+
+    #[ORM\ManyToMany(targetEntity: RelationClientConseiller::class, mappedBy: 'conseiller_id')]
+    private Collection $relation_conseiller_id;
+
+    public function __construct()
+    {
+        $this->relation_conseiller_id = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +99,33 @@ class Conseillers
     public function setAgenceId(?agences $agence_id): static
     {
         $this->agence_id = $agence_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RelationClientConseiller>
+     */
+    public function getRelationConseillerId(): Collection
+    {
+        return $this->relation_conseiller_id;
+    }
+
+    public function addRelationConseillerId(RelationClientConseiller $relationConseillerId): static
+    {
+        if (!$this->relation_conseiller_id->contains($relationConseillerId)) {
+            $this->relation_conseiller_id->add($relationConseillerId);
+            $relationConseillerId->addConseillerId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationConseillerId(RelationClientConseiller $relationConseillerId): static
+    {
+        if ($this->relation_conseiller_id->removeElement($relationConseillerId)) {
+            $relationConseillerId->removeConseillerId($this);
+        }
 
         return $this;
     }

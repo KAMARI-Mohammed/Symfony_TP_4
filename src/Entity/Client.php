@@ -40,9 +40,13 @@ class Client
     #[ORM\OneToMany(mappedBy: 'client_id', targetEntity: Comptes::class)]
     private Collection $id_client;
 
+    #[ORM\ManyToMany(targetEntity: RelationClientConseiller::class, mappedBy: 'client_id')]
+    private Collection $relation_client_id;
+
     public function __construct()
     {
         $this->id_client = new ArrayCollection();
+        $this->relation_client_id = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,6 +163,33 @@ class Client
             if ($idClient->getClientId() === $this) {
                 $idClient->setClientId(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RelationClientConseiller>
+     */
+    public function getRelationClientId(): Collection
+    {
+        return $this->relation_client_id;
+    }
+
+    public function addRelationClientId(RelationClientConseiller $relationClientId): static
+    {
+        if (!$this->relation_client_id->contains($relationClientId)) {
+            $this->relation_client_id->add($relationClientId);
+            $relationClientId->addClientId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationClientId(RelationClientConseiller $relationClientId): static
+    {
+        if ($this->relation_client_id->removeElement($relationClientId)) {
+            $relationClientId->removeClientId($this);
         }
 
         return $this;

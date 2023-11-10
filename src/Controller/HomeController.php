@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -16,7 +17,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/client', name: 'app_home')]
+    #[Route('/client', name: 'client_home')]
     public function showClients(): Response
     {
         return $this->render('home/index1.html.twig', [
